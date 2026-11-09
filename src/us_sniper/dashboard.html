@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>US AI Sniper | لوحة المسح الورقي</title>
+<style>
+:root {
+  --bg: #0a101a;
+  --panel: #111b2a;
+  --line: #28374c;
+  --text: #eef4ff;
+  --muted: #a8b9cf;
+  --accent: #65dfc0;
+  --warning: #ffcd82;
+  --risk: #ffa6ad;
+  font-family: system-ui, Tahoma, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; line-height: 1.65; }
+[hidden] { display: none !important; }
+.shell { width: min(100% - 32px, 1060px); margin-inline: auto; }
+.masthead { border-bottom: 1px solid var(--line); background: #0d1521; }
+.topbar, .section-head, .opportunity-head, .controls {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.topbar { min-height: 70px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 750; letter-spacing: .02em; }
+.mark {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border: 1px solid #3b7c75; border-radius: 10px; color: var(--accent); background: #123235;
+}
+.mark svg { width: 21px; height: 21px; }
+.badge, .chip {
+  display: inline-block; border: 1px solid var(--line); border-radius: 999px;
+  padding: 3px 11px; font-size: .8rem; color: var(--muted); background: #121e2e;
+}
+main { padding-block: 32px 20px; }
+.hero {
+  padding: clamp(19px, 4vw, 34px);
+  border: 1px solid var(--line); border-radius: 19px;
+  background: radial-gradient(ellipse at top right, #183541, transparent 68%), var(--panel);
+}
+.eyebrow { font-weight: 750; color: var(--accent); font-size: .78rem; letter-spacing: .04em; margin: 0; }
+h1, h2, h3, p, dl { margin: 0; }
+h1 { font-size: clamp(1.6rem, 5vw, 2.45rem); line-height: 1.28; margin-block: 8px; }
+h2 { font-size: 1.15rem; }
+h3 { font-size: 1.05rem; }
+.subtle, .section-head p, dt { color: var(--muted); font-size: .88rem; }
+.controls { margin-top: 20px; justify-content: flex-start; }
+.switcher { display: flex; flex-wrap: wrap; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: #0c1622; }
+button, select {
+  font: inherit; font-size: .88rem; min-height: 44px; border: 1px solid var(--line); border-radius: 9px;
+  padding: 6px 13px; color: var(--text); background: #142033;
+}
+button { cursor: pointer; }
+button[aria-pressed] { border-color: transparent; background: transparent; color: var(--muted); }
+button[aria-pressed="true"] { color: var(--accent); background: #193638; }
+button:disabled { cursor: default; opacity: .58; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.notice {
+  margin-top: 14px; padding: 10px 14px; border: 1px solid #76552c; border-radius: 10px;
+  background: #312417; color: var(--warning); font-weight: 650; font-size: .87rem;
+}
+.metrics {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-block: 18px;
+}
+.metric, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+.metric { padding: 14px; min-width: 0; }
+.metric dd { margin: 4px 0 0; font-size: 1.13rem; font-weight: 750; overflow-wrap: anywhere; }
+.metric .metric-note { margin-top: 3px; color: var(--muted); font-size: .74rem; font-weight: 400; }
+[data-tone="good"] { color: var(--accent); }
+[data-tone="warning"] { color: var(--warning); }
+[data-tone="risk"] { color: var(--risk); }
+.panel { margin-block: 14px; padding: clamp(14px, 3vw, 22px); }
+.section-head { margin-bottom: 14px; }
+.empty {
+  padding: 18px; border: 1px dashed #3a4f6c; background: #0d1624;
+  border-radius: 10px;
+}
+.empty p { margin-top: 3px; }
+.opportunities { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 12px; }
+.opportunity { min-width: 0; border: 1px solid var(--line); border-radius: 11px; padding: 14px; background: #0d1624; }
+.ticker { font-size: 1.2rem; letter-spacing: .03em; }
+.score { color: var(--accent); font-weight: 700; font-size: .88rem; white-space: nowrap; }
+.prices {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block: 12px; padding-block: 9px; border-block: 1px solid var(--line); gap: 7px;
+}
+.prices dd { margin: 3px 0 0; font-size: .94rem; font-weight: 700; overflow-wrap: anywhere; }
+.reasons { margin: 4px 0 0; padding-inline-start: 19px; font-size: .87rem; overflow-wrap: anywhere; }
+.symbols { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; padding: 0; margin: 0; }
+.chip[data-valid="false"] { border-style: dashed; }
+footer { padding-bottom: 25px; color: var(--muted); font-size: .8rem; }
+@media (max-width: 660px) { .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } main { padding-top: 20px; } }
+@media (max-width: 375px) { .metric { padding: 11px; } .shell { width: calc(100% - 24px); } }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="shell topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="7"/><path d="M12 2v5m0 10v5M2 12h5m10 0h5"/><circle cx="12" cy="12" r="1"/>
+        </svg>
+      </span>
+      <bdi>US AI Sniper</bdi>
+    </div>
+    <span class="badge">Paper Trading · قراءة فقط</span>
+  </div>
+</header>
+<main class="shell">
+  <section class="hero" aria-labelledby="page-title">
+    <p class="eyebrow">الأسهم الأمريكية</p>
+    <h1 id="page-title">لوحة نتائج المسح</h1>
+    <p class="subtle">تابع حالة الاتصال وراجع الفرص التي اجتازت فلاتر التحليل الورقي.</p>
+    <div class="controls">
+      <div class="switcher" role="group" aria-label="مصدر النتائج">
+        <button type="button" id="paper" aria-pressed="true">نتائج المسح الورقي</button>
+        <button type="button" id="simulation" aria-pressed="false">جرّب المحاكاة</button>
+      </div>
+      <button type="button" id="refresh">تحديث النتائج</button>
+      <label id="scenario-control" hidden>سيناريو المحاكاة
+        <select id="scenario">
+          <option value="accepted">مسح مع فرص</option>
+          <option value="not_run">المسح لم يعمل</option>
+          <option value="no_valid_data">بيانات غير صالحة</option>
+          <option value="no_opportunities">مسح بلا فرص</option>
+        </select>
+      </label>
+    </div>
+    <p id="simulation-notice" class="notice" hidden>وضع المحاكاة. جميع الرموز والأسعار وحالة الاتصال في هذا العرض أمثلة اختبارية.</p>
+  </section>
+
+  <dl class="metrics" aria-label="ملخص المسح">
+    <div class="metric"><dt>اتصال <bdi>IBKR</bdi></dt><dd id="connection">غير متحقق</dd><dd id="connection-time" class="metric-note"></dd></div>
+    <div class="metric"><dt>آخر مسح</dt><dd id="scan-time">—</dd><dd class="metric-note">بتوقيت الرياض</dd></div>
+    <div class="metric"><dt>الأسهم المفحوصة</dt><dd id="scanned-count">—</dd><dd id="valid-count" class="metric-note"></dd></div>
+    <div class="metric"><dt>الفرص المقبولة</dt><dd id="accepted-count">—</dd><dd class="metric-note">ضمن آخر مسح</dd></div>
+  </dl>
+
+  <section class="panel" aria-labelledby="opportunities-title">
+    <div class="section-head">
+      <h2 id="opportunities-title">الفرص المقبولة</h2>
+      <span id="source" class="badge">IBKR · نتائج ورقية</span>
+    </div>
+    <div id="state" class="empty" role="status">
+      <h3 id="state-title">المسح لم يعمل</h3>
+      <p id="state-detail" class="subtle">بانتظار أول نتيجة من محرك التحليل.</p>
+    </div>
+    <div id="opportunities" class="opportunities" hidden></div>
+  </section>
+  <section class="panel" aria-labelledby="symbols-title">
+    <div class="section-head">
+      <h2 id="symbols-title">الأسهم المفحوصة</h2>
+      <p id="symbols-legend" hidden>الحد المتقطع يعني أن بيانات السهم غير صالحة.</p>
+    </div>
+    <p id="symbols-empty" class="subtle">لا توجد أسهم مفحوصة في اللقطة الحالية.</p>
+    <ul id="symbols" class="symbols"></ul>
+  </section>
+</main>
+<footer class="shell">تعرض اللوحة لقطة آخر مسح. الأسعار المعروضة مستويات تحليلية بالدولار الأمريكي.</footer>
+<script>
+"use strict";
+
+const dateFormat = new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-latn", {
+  timeZone: "Asia/Riyadh", dateStyle: "medium", timeStyle: "short"
+});
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 8
+});
+const statusMaxAge = 5 * 60 * 1000;
+const timePattern = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:\d\d)$/;
+const symbolPattern = /^[A-Z][A-Z0-9.-]{0,15}$/;
+const sources = {paper: "ibkr_paper", simulation: "simulation"};
+
+function isTime(value) {
+  return typeof value === "string" && timePattern.test(value) && Number.isFinite(Date.parse(value));
+}
+
+function isSymbolList(value) {
+  return Array.isArray(value) && value.every(s => typeof s === "string" && symbolPattern.test(s))
+    && new Set(value).size === value.length;
+}
+
+function isOpportunity(item, validSymbols) {
+  if (!item || !validSymbols.includes(item.symbol) || !["LONG", "SHORT"].includes(item.side)) return false;
+  const {entry, target, stop, score, reasons} = item;
+  if (![entry, target, stop].every(price => Number.isFinite(price) && price > 0)) return false;
+  const ordered = item.side === "LONG" ? stop < entry && entry < target : target < entry && entry < stop;
+  return ordered && Number.isInteger(score) && score >= 0 && score <= 100
+    && Array.isArray(reasons) && reasons.length > 0
+    && reasons.every(reason => typeof reason === "string" && reason.trim());
+}
+
+function validateSnapshot(value, expectedSource) {
+  if (!value || value.schema_version !== 1 || value.source !== expectedSource
+      || value.mode !== "paper" || value.read_only !== true) return false;
+  const {connection, scan} = value;
+  if (!connection || !["unknown", "connected", "disconnected"].includes(connection.state)
+      || (connection.state === "unknown" ? connection.checked_at !== null && !isTime(connection.checked_at)
+        : !isTime(connection.checked_at))) return false;
+  if (!scan || !isSymbolList(scan.scanned_symbols) || !isSymbolList(scan.valid_symbols)
+      || !scan.valid_symbols.every(symbol => scan.scanned_symbols.includes(symbol))
+      || !Array.isArray(scan.opportunities)) return false;
+
+  if (scan.state === "not_run") {
+    return scan.finished_at === null && scan.scanned_symbols.length === 0 && scan.opportunities.length === 0;
+  }
+  if (!isTime(scan.finished_at)) return false;
+  if (scan.state === "no_valid_data") return scan.valid_symbols.length === 0 && scan.opportunities.length === 0;
+  return scan.state === "completed" && scan.valid_symbols.length > 0
+    && scan.opportunities.every(item => isOpportunity(item, scan.valid_symbols))
+    && new Set(scan.opportunities.map(item => item.symbol)).size === scan.opportunities.length;
+}
+
+function emptySnapshot() {
+  return {
+    schema_version: 1, source: sources.paper, mode: "paper", read_only: true,
+    connection: {state: "unknown", checked_at: null},
+    scan: {state: "not_run", finished_at: null, scanned_symbols: [], valid_symbols: [], opportunities: []}
+  };
+}
+
+function displayState(snapshot) {
+  const {state, opportunities} = snapshot.scan;
+  if (state !== "completed") return state;
+  return opportunities.length ? "accepted" : "no_opportunities";
+}
+
+function connectionState(snapshot, now = Date.now()) {
+  const {state, checked_at} = snapshot.connection;
+  if (snapshot.source === sources.simulation || state === "unknown") return state;
+  const age = now - Date.parse(checked_at);
+  return age > statusMaxAge || age < 0 ? "stale" : state;
+}
+
+function simulationSnapshot(scenario) {
+  const value = emptySnapshot();
+  value.source = sources.simulation;
+  if (scenario === "not_run") return value;
+  const time = "2026-01-05T15:30:00Z";
+  value.connection = {state: scenario === "no_valid_data" ? "disconnected" : "connected", checked_at: time};
+  value.scan = {
+    state: scenario === "no_valid_data" ? "no_valid_data" : "completed",
+    finished_at: time,
+    scanned_symbols: ["DEMO-A", "DEMO-B", "DEMO-C"],
+    valid_symbols: scenario === "no_valid_data" ? [] : ["DEMO-A", "DEMO-B"],
+    opportunities: scenario === "accepted" ? [
+      {symbol: "DEMO-A", side: "LONG", entry: 124.35, target: 128.20, stop: 122.60, score: 87,
+        reasons: ["اختراق نطاق بحجم أعلى من المتوسط", "السعر فوق VWAP"]},
+      {symbol: "DEMO-B", side: "SHORT", entry: 82.40, target: 79.70, stop: 83.65, score: 76,
+        reasons: ["رفض مقاومة بعد شمعة مكتملة", "زخم MACD سلبي"]}
+    ] : []
+  };
+  return value;
+}
+</script>
+<script>
+"use strict";
+
+const byId = id => document.getElementById(id);
+const localFile = location.protocol === "file:";
+const stateText = {
+  not_run: ["المسح لم يعمل", "بانتظار أول نتيجة من محرك التحليل."],
+  no_valid_data: ["بيانات المسح غير صالحة", "آخر محاولة مسح لم تحصل على بيانات كافية لتقييم الأسهم."],
+  no_opportunities: ["لا توجد فرص مؤكدة", "اكتمل المسح ببيانات صالحة ولم تجتز أي إشارة شروط القبول."],
+  unavailable: ["تعذر قراءة بيانات المسح", "راجع مصدر النتائج أو أعد المحاولة. لم تُعرض أي فرص من اللقطة المتعذرة."]
+};
+const connectionText = {
+  unknown: ["غير متحقق", "لم يصل تحديث موثوق"],
+  connected: ["متصل", "آخر تحقق"],
+  disconnected: ["غير متصل", "آخر تحقق"],
+  stale: ["التحقق قديم", "آخر تحديث مسجل"]
+};
+let view = "paper";
+let paper = emptySnapshot();
+let unavailable = false;
+let refreshing = false;
+
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function opportunityCard(item) {
+  const card = element("article", "opportunity");
+  const heading = element("div", "opportunity-head");
+  const title = element("h3");
+  title.append(element("bdi", "ticker", item.symbol));
+  title.append(" ", element("span", "badge", item.side === "LONG" ? "صعود" : "هبوط"));
+  const score = element("span", "score", "قوة الإشارة ");
+  score.append(element("bdi", "", item.score + " / 100"));
+  heading.append(title, score);
+
+  const levels = element("dl", "prices");
+  for (const [label, price, tone] of [
+    ["الدخول المقترح", item.entry, ""], ["الهدف", item.target, "good"], ["وقف الخسارة", item.stop, "risk"]
+  ]) {
+    const level = element("div");
+    const value = element("dd");
+    value.dataset.tone = tone;
+    value.append(element("bdi", "", usd.format(price)));
+    level.append(element("dt", "", label), value);
+    levels.append(level);
+  }
+  const reasons = element("ul", "reasons");
+  reasons.append(...item.reasons.map(reason => element("li", "", reason)));
+  card.append(heading, levels, element("p", "subtle", "أسباب قبول الإشارة"), reasons);
+  return card;
+}
+
+function render() {
+  const simulated = view === "simulation";
+  const snapshot = simulated ? simulationSnapshot(byId("scenario").value) : paper;
+  const {connection, scan} = snapshot;
+  const state = !simulated && unavailable ? "unavailable" : displayState(snapshot);
+  const connected = connectionState(snapshot);
+  const hasRun = scan.state !== "not_run";
+  const [label, timeLabel] = connectionText[connected];
+
+  byId("paper").setAttribute("aria-pressed", String(!simulated));
+  byId("simulation").setAttribute("aria-pressed", String(simulated));
+  byId("scenario-control").hidden = !simulated;
+  byId("simulation-notice").hidden = !simulated;
+  byId("refresh").hidden = simulated || localFile;
+  byId("refresh").disabled = refreshing;
+  byId("source").textContent = simulated ? "محاكاة اختبارية" : "IBKR · نتائج ورقية";
+  byId("connection").textContent = simulated ? label + " (محاكاة)" : label;
+  byId("connection").dataset.tone = connected === "connected" ? "good" : "warning";
+  byId("connection-time").textContent = connection.checked_at
+    ? timeLabel + " · " + dateFormat.format(new Date(connection.checked_at)) : timeLabel;
+  byId("scan-time").textContent = scan.finished_at ? dateFormat.format(new Date(scan.finished_at)) : "—";
+  byId("scanned-count").textContent = hasRun ? scan.scanned_symbols.length : "—";
+  byId("valid-count").textContent = hasRun ? scan.valid_symbols.length + " ببيانات صالحة" : "";
+  byId("accepted-count").textContent = scan.state === "completed" ? scan.opportunities.length : "—";
+
+  byId("state").hidden = state === "accepted";
+  if (state !== "accepted") {
+    const [title, detail] = stateText[state];
+    byId("state-title").textContent = title;
+    byId("state-detail").textContent = state === "not_run" && localFile && !simulated
+      ? "هذه معاينة محلية. شغّل اللوحة من المشروع لقراءة نتائج المحرك، أو جرّب المحاكاة." : detail;
+  }
+  byId("opportunities").hidden = state !== "accepted";
+  byId("opportunities").replaceChildren(...scan.opportunities.map(opportunityCard));
+  byId("symbols-empty").hidden = scan.scanned_symbols.length > 0;
+  byId("symbols-legend").hidden = scan.scanned_symbols.length === scan.valid_symbols.length;
+  byId("symbols").replaceChildren(...scan.scanned_symbols.map(symbol => {
+    const valid = scan.valid_symbols.includes(symbol);
+    const chip = element("li", "chip");
+    chip.dataset.valid = String(valid);
+    chip.setAttribute("aria-label", symbol + (valid ? "، بيانات صالحة" : "، بيانات غير صالحة"));
+    chip.append(element("bdi", "", symbol));
+    return chip;
+  }));
+}
+
+async function refresh() {
+  if (view !== "paper" || localFile || refreshing) return;
+  refreshing = true;
+  byId("refresh").disabled = true;
+  try {
+    const response = await fetch("/api/snapshot", {cache: "no-store", signal: AbortSignal.timeout(5000)});
+    const value = await response.json();
+    if (response.status === 404 && value?.error === "snapshot_missing") {
+      paper = emptySnapshot();
+    } else {
+      if (!response.ok || !validateSnapshot(value, sources.paper)) throw new Error("Invalid paper snapshot");
+      paper = value;
+    }
+    unavailable = false;
+  } catch {
+    paper = emptySnapshot();
+    unavailable = true;
+  } finally {
+    refreshing = false;
+    if (view === "paper") render();
+  }
+}
+
+byId("paper").addEventListener("click", () => { view = "paper"; render(); refresh(); });
+byId("simulation").addEventListener("click", () => { view = "simulation"; render(); });
+byId("scenario").addEventListener("change", render);
+byId("refresh").addEventListener("click", refresh);
+render();
+if (!localFile) {
+  refresh();
+  setInterval(refresh, 30_000);
+}
+</script>
+</body>
+</html>
