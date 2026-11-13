@@ -42,4 +42,6 @@ class Signal:
     observed_at: datetime
     reasons: Sequence[str] = field(default_factory=tuple)
     indicators: Mapping[str, float] = field(default_factory=dict)
+    chart_indicators: Mapping = field(default_factory=dict)
+
 

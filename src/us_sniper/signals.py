@@ -6,6 +6,7 @@ from typing import Sequence
 
 from .indicators import adx, atr, bollinger, cci, ema, macd, obv, rsi, stochastic_rsi, vwap, williams_r
 from .models import Bar, Signal
+from .chart_indicators import analyze as chart_analysis
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,7 @@ def analyze(symbol: str, bars: Sequence[Bar], regime: Regime, min_score: int = 7
         raise ValueError("at least 60 completed bars are required")
     closes = [bar.close for bar in source]
     latest = source[-1]
+    context = chart_analysis([{"high": b.high, "low": b.low, "close": b.close} for b in source])
     fast, slow = ema(closes, 9), ema(closes, 21)
     rsi7 = rsi(closes, 7)
     macd_line, macd_signal, macd_hist = macd(closes)
@@ -105,8 +107,10 @@ def analyze(symbol: str, bars: Sequence[Bar], regime: Regime, min_score: int = 7
         reference_price=latest.close,
         invalidation=invalidation,
         observed_at=latest.timestamp.astimezone(timezone.utc),
+        chart_indicators=context,
         reasons=tuple(reasons),
         indicators={
+            **{f"ema{p}": value for p, value in context.get("ema", {}).items()},
             "ema9": fast, "ema21": slow, "rsi7": rsi7,
             "macd": macd_line, "macd_signal": macd_signal,
             "atr": current_atr, "boll_lower": lower, "boll_mid": middle,
@@ -115,4 +119,5 @@ def analyze(symbol: str, bars: Sequence[Bar], regime: Regime, min_score: int = 7
             "adx": current_adx, "volume_ratio": volume_ratio,
         },
     )
+
 
